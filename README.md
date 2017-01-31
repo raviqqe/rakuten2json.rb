@@ -1,0 +1,1 @@
+# rakuten2json.rb
