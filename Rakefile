@@ -60,4 +60,4 @@ end
 
 
 CLEAN.include Dir.glob(%w(*.txt *.csv))
-CLOBBER.include Dir.glob(%w(.venv train develop test))
+CLOBBER.include %w(.venv train develop test)
