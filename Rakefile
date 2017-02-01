@@ -67,7 +67,7 @@ end
 
 
 task :vocabularies => DATASET_DIRS[0..1] do |t|
-  sh %W(python3 bin/create_vocabularies.py --min_freq #{ENV['MIN_FREQ'] or 0}
+  sh %W(python3 bin/create_vocabularies.py --min_freq #{ENV['min_freq'] or 0}
                                            #{t.sources.join ' '}).join(' ')
 end
 
