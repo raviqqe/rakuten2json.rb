@@ -13,6 +13,9 @@ DOCUMENT_FILE = 'documents.txt'
 LABEL_FILE = 'labels.csv'
 EXAMPLE_FILE = 'examples.txt'
 
+DATASET_DIRS = %w(train develop test)
+VOCABULARY_FILES = %w(words.txt chars.txt)
+
 
 
 [ORIGINAL_LABEL_FILE, ORIGINAL_DOCUMENT_FILE].each do |f|
@@ -47,7 +50,7 @@ def vsh *args
 end
 
 
-task :default => EXAMPLE_FILE do |t|
+task :dataset => EXAMPLE_FILE do |t|
   sh "rm -rf #{VENV_DIR}; python3 -m venv #{VENV_DIR}"
   vsh 'pip3 install --upgrade --no-cache-dir nltokeniz gargparse mecab-python3'
   vsh 'python3 -m nltk.downloader punkt'
@@ -57,6 +60,23 @@ task :default => EXAMPLE_FILE do |t|
       --test_data_size 10000
       #{t.source})
 end
+
+DATASET_DIRS.each do |dir|
+  directory dir => :dataset
+end
+
+
+task :vocabularies => DATASET_DIRS[0..1] do |t|
+  sh %W(python3 bin/create_vocabularies.py --min_freq #{ENV['MIN_FREQ'] or 0}
+                                           #{t.sources.join ' '}).join(' ')
+end
+
+VOCABULARY_FILES.each do |filename|
+  file filename => :vocabularies
+end
+
+
+task :default => [*DATASET_DIRS, *VOCABULARY_FILES]
 
 
 CLEAN.include Dir.glob(%w(*.txt *.csv))
