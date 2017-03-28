@@ -43,14 +43,17 @@ def vsh(*args)
 end
 
 task dataset: EXAMPLE_FILE do |t|
-  sh "rm -rf #{VENV_DIR}; python3 -m venv #{VENV_DIR}"
-  vsh 'pip3 install --upgrade --no-cache-dir nltokeniz gargparse mecab-python3'
-  vsh 'python3 -m nltk.downloader punkt'
-  vsh %W(python3 bin/rakuten2json.py
-         --train_data_size 300000
-         --develop_data_size 10000
-         --test_data_size 10000
-         #{t.source})
+  unless Dir.exist? 'train'
+    sh "rm -rf #{VENV_DIR}; python3 -m venv #{VENV_DIR}"
+    vsh 'pip3 install --upgrade --no-cache-dir '\
+        'nltokeniz gargparse mecab-python3'
+    vsh 'python3 -m nltk.downloader punkt'
+    vsh %W(python3 bin/rakuten2json.py
+           --train_data_size 300000
+           --develop_data_size 10000
+           --test_data_size 10000
+           #{t.source})
+  end
 end
 
 DATASET_DIRS.each do |dir|
